@@ -64,9 +64,15 @@ if [ -f /etc_ro/openssl.cnf ]; then
 	cp -f /etc_ro/openssl.cnf /etc/ssl
 fi
 
-if [ -f /etc_ro/ca-certificates.crt ]; then
+
+# Use a persistent CA override when present, otherwise the firmware trust store.
+mkdir -p /etc/ssl/certs
+if [ -s /etc/storage/cacert.pem ]; then
+	ln -sf /etc/storage/cacert.pem /etc/ssl/cert.pem
+else
 	ln -sf /etc_ro/ca-certificates.crt /etc/ssl/cert.pem
 fi
+ln -sf /etc/ssl/cert.pem /etc/ssl/certs/ca-certificates.crt
 
 # create symlinks
 ln -sf /home/root /home/admin
