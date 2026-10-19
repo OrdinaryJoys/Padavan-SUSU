@@ -777,11 +777,7 @@ esac
 # UUID API
 case $OS_FAMILY in
 	Linux)
-		if pkg_detect uuid; then
-			echo "#define LIB_UUID" >> ${CONFIGFILE}
-		else
-			echo "Warning: uuid pkg-config not found"
-		fi
+		# Padavan: do not link against the host's libuuid.
 		;;
 	*)
 		if grep uuid_create /usr/include/uuid.h > /dev/null 2>&1 ; then
