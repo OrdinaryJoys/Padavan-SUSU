@@ -744,7 +744,14 @@ VOID RTMPDrvClose(VOID *pAdSrc, VOID *net_dev)
 		/* register access before Radio off.*/
 #ifdef RTMP_PCI_SUPPORT
 
-		if (pAd->infType == RTMP_DEV_INF_PCI || pAd->infType == RTMP_DEV_INF_PCIE) {
+		/* RT28xxPciAsicRadioOff() is the legacy RT28xx/MAC helper.  For HIF_MT
+		 * chips (MT7615/MT7622) it is an empty stub that only logs and returns
+		 * FALSE, so calling it here neither powers the RF off nor reports a real
+		 * failure.  Skip the stub instead of logging a bogus error on every
+		 * interface close (same fix as padavan-4.4).
+		 */
+		if (!IS_HIF_TYPE(pAd, HIF_MT) &&
+		    (pAd->infType == RTMP_DEV_INF_PCI || pAd->infType == RTMP_DEV_INF_PCIE)) {
 			BOOLEAN brc = TRUE;
 			brc = RT28xxPciAsicRadioOff(pAd, RTMP_HALT, 0);
 
