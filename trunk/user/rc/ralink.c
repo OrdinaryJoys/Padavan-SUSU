@@ -688,7 +688,7 @@ gen_ralink_config(int is_soc_ap, int is_aband, int disable_autoscan)
 	fprintf(fp, "VOW_Airtime_Ctrl_En=%d\n", 0);
 	fprintf(fp, "VOW_Rate_Ctrl_En=%d\n", 0);
 	fprintf(fp, "VOW_WATF_Enable=%d\n", 0);
-	fprintf(fp, "BandSteering=%d\n", 0);
+	fprintf(fp, "BandSteering=%d\n", nvram_wlan_get_int(is_aband, "BandSteering"));
 	fprintf(fp, "BFBACKOFFenable=%d\n", 0);
 	fprintf(fp, "DfsCalibration=%d\n", 0);
 	fprintf(fp, "ITxBfTimeout=%d\n", 0);

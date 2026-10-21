@@ -231,12 +231,13 @@ struct nvram_pair router_defaults[] = {
 	{ "wl_HT_BAWinSize", "64" },
 #endif
 	{ "wl_HT_80211KV", "1" },
-	{ "wl_HT_80211R", "0" },
+	{ "wl_HT_80211R", "1" },
 	{ "wl_HT_MpduDensity", "5" },
 	{ "wl_HT_AutoBA", "1" },
 	{ "wl_VgaClamp", "0" },
-	{ "wl_KickStaRssiLow", "0" },
-	{ "wl_AssocReqRssiThres", "0" },
+	{ "wl_KickStaRssiLow", "-75" },
+	{ "wl_AssocReqRssiThres", "-80" },
+	{ "wl_BandSteering", "1" },
 
 	// guest AP 5Ghz
 	{ "wl_guest_enable", "0" },
@@ -329,7 +330,7 @@ struct nvram_pair router_defaults[] = {
 	{ "rt_HT_RDG", "0" },
 	{ "rt_HT_AMSDU", "0" },
 	{ "rt_HT_80211KV", "1" },
-	{ "rt_HT_80211R", "0" },
+	{ "rt_HT_80211R", "1" },
 	{ "rt_HT_MpduDensity", "5" },
 #if defined (USE_WID_2G) && (USE_WID_2G==7615 || USE_WID_2G==7915)
 	{ "rt_HT_BAWinSize", "256" },
@@ -341,8 +342,9 @@ struct nvram_pair router_defaults[] = {
 #endif
 	{ "rt_HT_AutoBA", "1" },
 	{ "rt_VgaClamp", "0" },
-	{ "rt_KickStaRssiLow", "0" },
-	{ "rt_AssocReqRssiThres", "0" },
+	{ "rt_KickStaRssiLow", "-75" },
+	{ "rt_AssocReqRssiThres", "-80" },
+	{ "rt_BandSteering", "1" },
 
 	// guest AP 2.4Ghz
 	{ "rt_guest_enable", "0" },
@@ -1035,7 +1037,7 @@ struct nvram_pair router_defaults[] = {
 
 #if defined(CONFIG_RALINK_MT7621) || (defined(CONFIG_RALINK_MT7620) && !defined(BOARD_N14U))
 #if defined(USE_MT7615_AP) || (USE_MT7915_AP) // hwnat is disabled by default
-	{ "hw_nat_mode", "2" },
+	{ "hw_nat_mode", "3" },
 #else
 	{ "hw_nat_mode", "4" },
 #endif
