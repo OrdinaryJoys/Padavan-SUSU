@@ -385,11 +385,13 @@ init_nodes(void)
 {
 	mknod("/dev/spiS0",  S_IFCHR | 0666, makedev(217, 0));
 	mknod("/dev/i2cM0",  S_IFCHR | 0666, makedev(218, 0));
-	mknod("/dev/nvram",  S_IFCHR | 0666, makedev(228, 0));
+	mknod("/dev/nvram",  S_IFCHR | 0600, makedev(228, 0));
+	chmod("/dev/nvram", 0600);
 	mknod("/dev/gpio",   S_IFCHR | 0666, makedev(252, 0));
 	mknod("/dev/rdm0",   S_IFCHR | 0666, makedev(253, 0));
 #if defined (USE_HW_NAT)
-	mknod("/dev/hwnat0", S_IFCHR | 0666, makedev(220, 0));
+	mknod("/dev/hwnat0", S_IFCHR | 0600, makedev(220, 0));
+	chmod("/dev/hwnat0", 0600);
 #if !defined (USE_HW_NAT_V2)
 	mknod("/dev/acl0",   S_IFCHR | 0666, makedev(230, 0));
 	mknod("/dev/ac0",    S_IFCHR | 0666, makedev(240, 0));
@@ -482,7 +484,9 @@ init_main_loop(void)
 {
 	pid_t shell_pid = 0;
 
-	umask(0000);
+	/* Services must opt in to shared writes instead of exposing every new
+	 * configuration and PID file to unprivileged local processes. */
+	umask(0022);
 
 	/* Basic initialization */
 	init_time();

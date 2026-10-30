@@ -15,6 +15,9 @@
  * MA 02111-1307 USA
  */
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
@@ -1020,15 +1023,22 @@ shutdown_router(int level)
 void 
 handle_notifications(void)
 {
-	int i, stop_handle = 0;
+	int i, stop_handle = 0, queue_fd;
 	char notify_name[300];
 
-	DIR *directory = opendir(DIR_RC_NOTIFY);
-	if (!directory)
+	DIR *directory;
+
+	queue_fd = rc_notification_open_dir(DIR_RC_NOTIFY);
+	if (queue_fd < 0)
 		return;
+	directory = fdopendir(queue_fd);
+	if (!directory) {
+		close(queue_fd);
+		return;
+	}
 
 	// handle max 10 requests at once (prevent deadlock)
-	for (i=0; i < 10; i++)
+	for (i=0; i < 10;)
 	{
 		struct dirent *entry;
 		FILE *test_fp;
@@ -1040,6 +1050,11 @@ handle_notifications(void)
 			continue;
 		if (strcmp(entry->d_name, "..") == 0)
 			continue;
+		i++;
+		if (!rc_notification_valid_marker(queue_fd, entry->d_name)) {
+			unlinkat(queue_fd, entry->d_name, 0);
+			continue;
+		}
 		
 		/* Remove the marker file. */
 		snprintf(notify_name, sizeof(notify_name), "%s/%s", DIR_RC_NOTIFY, entry->d_name);
@@ -1634,6 +1649,9 @@ handle_notifications(void)
 	}
 
 	closedir(directory);
+	/* SIGUSR1 may coalesce; drain remaining batches on the next turn. */
+	if (i == 10 && !stop_handle)
+		kill(getpid(), SIGUSR1);
 }
 
 typedef struct {
